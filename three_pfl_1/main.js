@@ -1,3 +1,4 @@
+//                  RIGHT / UP / TOWARDS ME
 import './style.css'
 
 import * as THREE from 'three';
@@ -15,17 +16,18 @@ const renderer = new THREE.WebGL1Renderer({
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
+
 camera.position.setZ(30);
 
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100)
+
 // const material = new THREE.MeshBasicMaterial( {color: 0xFF6347, wireframe: true})
+const geometry = new THREE.TorusGeometry(10, 3, 16, 100)
 const material = new THREE.MeshStandardMaterial({ color: 0xFF6447 })
 const torus = new THREE.Mesh(geometry, material);
 
 scene.add(torus)
 
 
-//                  RIGHT / UP / TOWARDS ME
 const PointLight = new THREE.PointLight(0xffffff)
 PointLight.position.set(0, 0, 0)
 
@@ -71,6 +73,8 @@ const moon = new THREE.Mesh(
 );
 
 scene.add(cube, moon)
+
+
 
 moon.position.z = 30;
 moon.position.setX(-10)
