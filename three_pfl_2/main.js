@@ -31,7 +31,7 @@ camera.rotation.x = -0.4;
 
 // GEOMETRIES
 const geometry = new THREE.IcosahedronGeometry(0.6)
-const material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+const material = new THREE.MeshBasicMaterial({ color: 0xfaafa00, wireframe: true});
 const icosahedron = new THREE.Mesh(geometry, material);
 
 scene.add(icosahedron)
