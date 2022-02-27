@@ -172,9 +172,9 @@ function animate() {
   chairAnimation(chair);
   worldState.starsState.active && starsAnimation(stars);
 
-  group.rotation.x += 0.0005;
-  group.rotation.y += 0.0001;
-  group.rotation.z += 0.0007;
+  group.rotation.x += 0.0002;
+  group.rotation.y += 0.0003;
+  group.rotation.z += 0.0001;
 
   stats && stats.update();
 }
