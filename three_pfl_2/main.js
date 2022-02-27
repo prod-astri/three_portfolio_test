@@ -23,7 +23,6 @@ const windowState = {
   statsOn: false
 }
 
-
 // THREE STATS
 const stats = new Stats();
 
@@ -36,7 +35,7 @@ function toggleStats() {
     container.appendChild(stats.dom)
     windowState.statsOn = true;
   }
-  console.log("// statsOn: " + windowState.statsOn)
+  // console.log("// statsOn: " + windowState.statsOn)
 } 
 
 // RENDERER, WINDOW SIZE
@@ -72,29 +71,31 @@ const material = new THREE.MeshBasicMaterial({ color: 0xfaafa00, wireframe: true
 const icosahedron = new THREE.Mesh(geometry, material);
 scene.add(icosahedron)
 
+let stars = [];
 function addStar() {
   const geometry = new THREE.OctahedronGeometry(0.25);
   const material = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
   const star = new THREE.Mesh(geometry, material);
   const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
-  star.userData.name = "foo";
+  star.name = `star`;
   star.position.set(x, y, z);
+  stars.push(star)
   scene.add(star)
 }
 
 Array(200).fill().forEach(addStar)
-console.log(scene)
+
 
 // OBJECT LOADERS
-
 let chair;
 const loader = new GLTFLoader();
 loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
   chair = gltf.scene;
-  chair.traverse((node) => {
-    if (!node.isMesh) return;
-    node.material.wireframe = true;
-  });
+  // NOT WORKING
+  // chair.traverse((node) => {
+  //   if (!node.isMesh) return;
+  //   node.material.wireframe = true;
+  // });
   scene.add(chair);
   chair.position.set(-2, 0, 0);
   // const chairControls = new OrbitControls(chair, renderer.domElement);
@@ -117,8 +118,14 @@ function animate() {
 
   icosahedronAnimation(icosahedron)
   chairAnimation(chair);
-
+  starsAnimation(stars)
   stats && stats.update();
+}
+
+function starsAnimation(){
+ stars.forEach(function (s) {
+   s.position.x >= 0 && (s.position.x -= 0.01);
+ })
 }
 
 function icosahedronAnimation(icosahedron) {
