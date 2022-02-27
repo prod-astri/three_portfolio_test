@@ -13,7 +13,33 @@ main {
   /* text-align: center; */
 }
 
+header {
+  display:flex;
+}
+
+#headerButtons{
+
+}
+
 .projectBlock{
+  display:flex;
+  margin: inherit 10px;
   color: aliceblue;
   background-color: rgba(240, 248, 255, 0.3);
+}
+
+.textBlock{
+  flex-grow: 2;
+}
+
+img {
+  min-width:30%;
+  max-width: 300px;
+  margin:  20px;
+}
+
+button {
+  background-color: black;
+  color: aliceblue;
+  min-width:10rem;
 }
