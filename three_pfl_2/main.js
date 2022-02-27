@@ -86,6 +86,8 @@ scene.add(icosahedron)
 
 
 let stars = [];
+const group = new THREE.Group();
+
 function addStar() {
   const geometry = new THREE.OctahedronGeometry(0.25);
   const material = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
@@ -97,14 +99,16 @@ function addStar() {
   star.rotation.y = [x]
   star.originalPosition = { x, y, z }
   stars.push(star)
-  scene.add(star)
+  group.add(star)
 }
+scene.add(group)
 
 Array(200).fill().forEach(addStar)
 
 document.getElementById("starsButton").onclick = function () {
   worldState.starsState.active = !worldState.starsState.active
 };
+
 
 // OBJECT LOADERS
 let chair;
@@ -163,10 +167,14 @@ function animate() {
   
   delta = clock.getDelta();
   (mixer && worldState.bassState.active) && mixer.update(delta);
-  
+
   icosahedronAnimation(icosahedron)
   chairAnimation(chair);
   worldState.starsState.active && starsAnimation(stars);
+
+  group.rotation.x += 0.0005;
+  group.rotation.y += 0.0001;
+  group.rotation.z += 0.0007;
 
   stats && stats.update();
 }
