@@ -32,7 +32,8 @@ const worldState = {
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
-
+let mixer;
+let clock = new THREE.Clock();
 // THREE STATS
 const stats = new Stats();
 
@@ -111,11 +112,33 @@ loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
   //   node.material.wireframe = true;
   // });
   scene.add(chair);
+
   chair.position.set(-2, 0, 0);
   // const chairControls = new OrbitControls(chair, renderer.domElement);
   console.log('load chair')
 }, function (xhr) {
-  console.log(('chair ', xhr.loaded / xhr.total * 100), "% loaded")
+  console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
+}, function (error) {
+  console.error(error);
+});
+
+
+let bass;
+const bassLoader = new GLTFLoader();
+bassLoader.load('./3d_models/anibass.glb', function (gltf) {
+  bass = gltf.scene;
+  scene.add(bass);
+  mixer = new THREE.AnimationMixer(gltf.scene);
+
+  gltf.animations.forEach((clip) => {
+    mixer.clipAction(clip).play();
+  });
+
+  bass.position.set(2, 0, 0);
+  // const chairControls = new OrbitControls(chair, renderer.domElement);
+  console.log('load bass')
+}, function (xhr) {
+  console.log(('bass ', xhr.loaded / xhr.total * 100), "% bass loaded")
 }, function (error) {
   console.error(error);
 });
@@ -130,9 +153,13 @@ function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
 
+  let delta = clock.getDelta();
+  if (mixer) mixer.update(delta);
+
   icosahedronAnimation(icosahedron)
   chairAnimation(chair);
   worldState.starsState.active && starsAnimation(stars);
+
   stats && stats.update();
 }
 
@@ -156,6 +183,7 @@ function starsAnimation() {
 
 function icosahedronAnimation(icosahedron) {
   icosahedron && (icosahedron.rotation.y += 0.01);
+  icosahedron && (icosahedron.rotation.z += 0.007);
 }
 
 function chairAnimation(chair) {
