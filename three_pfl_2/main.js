@@ -12,31 +12,41 @@ let boxBounds = {
   z: 1
 }
 
+let chairSwitch = {
+  x: true,
+  y: true,
+  z: true
+}
+
+// PAGE STATE
+const worldState = {
+  statsOn: false,
+  starsState: {
+    active: true,
+    distance: 100
+  }
+}
+
 // CAMERA, SCENE SETUP
 // ( field of view, aspect ratio, near , and far camera frustrum )
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
 
-// PAGE STATE
-const windowState = {
-  statsOn: false
-}
-
 // THREE STATS
 const stats = new Stats();
 
-document.getElementById("statsButton").onclick = function() {toggleStats()};
+document.getElementById("statsButton").onclick = function () { toggleStats() };
 function toggleStats() {
-  if (windowState.statsOn){
+  if (worldState.statsOn) {
     container.removeChild(stats.dom);
-    windowState.statsOn = false;
+    worldState.statsOn = false;
   } else {
     container.appendChild(stats.dom)
-    windowState.statsOn = true;
+    worldState.statsOn = true;
   }
-  // console.log("// statsOn: " + windowState.statsOn)
-} 
+  // console.log("// statsOn: " + worldState.statsOn)
+}
 
 // RENDERER, WINDOW SIZE
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
@@ -79,12 +89,16 @@ function addStar() {
   const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
   star.name = `star`;
   star.position.set(x, y, z);
+  star.rotation.x = x
+  star.originalPosition = { x, y, z }
   stars.push(star)
   scene.add(star)
 }
+console.log(stars)
 
 Array(200).fill().forEach(addStar)
 
+document.getElementById("starsButton").onclick = function () { worldState.starsState.active = !worldState.starsState.active };
 
 // OBJECT LOADERS
 let chair;
@@ -118,24 +132,30 @@ function animate() {
 
   icosahedronAnimation(icosahedron)
   chairAnimation(chair);
-  starsAnimation(stars)
+  worldState.starsState.active && starsAnimation(stars);
   stats && stats.update();
 }
 
-function starsAnimation(){
- stars.forEach(function (s) {
-   s.position.x >= 0 && (s.position.x -= 0.01);
- })
+// f is the factor of displacement of the stars
+// d changes the direction of the stars
+let f;
+let d = true;
+function starsAnimation() {
+  f = worldState.starsState.distance * 0.01;
+  stars.forEach(function (s) {
+    // s.rotation.x += 0.1;
+    s.rotation.z += 0.07;
+    s.position.x = s.originalPosition.x * f;
+    s.position.y = s.originalPosition.y * f;
+    s.position.z = s.originalPosition.z * f;
+  })
+  d ? worldState.starsState.distance += 0.1 : worldState.starsState.distance -= 0.1
+  f < -1 && (d = !d, worldState.starsState.distance = -100);
+  f > 1 && (d = !d, worldState.starsState.distance = 100);
 }
 
 function icosahedronAnimation(icosahedron) {
   icosahedron && (icosahedron.rotation.y += 0.01);
-}
-
-let chairSwitch = {
-  x: true,
-  y: true,
-  z: true
 }
 
 function chairAnimation(chair) {
@@ -147,7 +167,7 @@ function chairAnimation(chair) {
     // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
     // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
     // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
-    );
+  );
 }
 
 animate()
