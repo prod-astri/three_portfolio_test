@@ -5,15 +5,39 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
+
+let boxBounds = {
+  x: 5,
+  y: 5,
+  z: 1
+}
+
 // CAMERA, SCENE SETUP
 // ( field of view, aspect ratio, near , and far camera frustrum )
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
 
+// PAGE STATE
+const windowState = {
+  statsOn: false
+}
+
+
 // THREE STATS
 const stats = new Stats();
-container.appendChild(stats.dom);
+
+document.getElementById("statsButton").onclick = function() {toggleStats()};
+function toggleStats() {
+  if (windowState.statsOn){
+    container.removeChild(stats.dom);
+    windowState.statsOn = false;
+  } else {
+    container.appendChild(stats.dom)
+    windowState.statsOn = true;
+  }
+  console.log("// statsOn: " + windowState.statsOn)
+} 
 
 // RENDERER, WINDOW SIZE
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
@@ -85,6 +109,7 @@ loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
 // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
 
+
 // ANIMATION
 function animate() {
   requestAnimationFrame(animate);
@@ -93,15 +118,29 @@ function animate() {
   icosahedronAnimation(icosahedron)
   chairAnimation(chair);
 
-  stats.update();
+  stats && stats.update();
 }
 
 function icosahedronAnimation(icosahedron) {
   icosahedron && (icosahedron.rotation.y += 0.01);
 }
 
+let chairSwitch = {
+  x: true,
+  y: true,
+  z: true
+}
+
 function chairAnimation(chair) {
-  chair && (chair.rotation.x += 0.01);
+  chair && (
+    chair.rotation.x += 0.01
+    // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
+    // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
+    // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
+    // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
+    // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
+    // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
+    );
 }
 
 animate()
