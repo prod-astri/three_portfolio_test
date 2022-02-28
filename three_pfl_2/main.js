@@ -6,18 +6,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
 
-let boxBounds = {
-  x: 5,
-  y: 5,
-  z: 1
-}
-
-let chairSwitch = {
-  x: true,
-  y: true,
-  z: true
-}
-
 // PAGE STATE
 const worldState = {
   statsOn: false,
@@ -30,10 +18,11 @@ const worldState = {
   }
 }
 
+
 // CAMERA, SCENE SETUP
 // ( field of view, aspect ratio, near , and far camera frustrum )
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
 let mixer;
 let clock = new THREE.Clock();
@@ -41,13 +30,8 @@ let clock = new THREE.Clock();
 const stats = new Stats();
 
 document.getElementById("statsButton").onclick = function () {
-  if (worldState.statsOn) {
-    container.removeChild(stats.dom);
-    worldState.statsOn = false;
-  } else {
-    container.appendChild(stats.dom)
-    worldState.statsOn = true;
-  }
+  worldState.statsOn ? container.removeChild(stats.dom) : container.appendChild(stats.dom);
+  worldState.statsOn = !worldState.statsOn;
 };
 
 
@@ -85,7 +69,7 @@ scene.add(icosahedron)
 
 
 let stars = [];
-const group = new THREE.Group();
+const starsGroup = new THREE.Group();
 
 function addStar() {
   const geometry = new THREE.OctahedronGeometry(0.25);
@@ -98,16 +82,36 @@ function addStar() {
   star.rotation.y = [x]
   star.originalPosition = { x, y, z }
   stars.push(star)
-  group.add(star)
+  starsGroup.add(star)
 }
 
 Array(100).fill().forEach(addStar)
-group.add(icosahedron)
-scene.add(group)
+scene.add(starsGroup)
 document.getElementById("starsButton").onclick = function () {
   worldState.starsState.active = !worldState.starsState.active
 };
 
+let cubes = [];
+const cubesGroup = new THREE.Group();
+
+let cubeZPosition = -20;
+const cubeGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+const redCubeMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, wireframe: true })
+const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
+function addCube() {
+  const cube = new THREE.Mesh((cubeGeometry), 
+  (cubeZPosition % 5 === 0 ? redCubeMaterial : cubeMaterial));
+  const [wi, he, de] = [1, 1, 1]
+  cube.name = `cube`;
+  cube.position.set(2, cubeZPosition, 2);
+  cubeZPosition++
+  console.log(cubeZPosition);
+  cubes.push(cube)
+  cubesGroup.add(cube)
+}
+
+Array(40).fill().forEach(addCube)
+scene.add(cubesGroup)
 
 // OBJECT LOADERS
 let chair;
@@ -130,8 +134,7 @@ document.getElementById("bassButton").onclick = function () {
 };
 
 let bass;
-const bassLoader = new GLTFLoader();
-bassLoader.load('./3d_models/anibass.glb', function (gltf) {
+loader.load('./3d_models/anibass.glb', function (gltf) {
   bass = gltf.scene;
   scene.add(bass);
 
@@ -164,10 +167,10 @@ function animate() {
   delta = clock.getDelta();
   (mixer && worldState.bassState.active) && mixer.update(delta);
 
-  // run the built in animations
-  icosahedronAnimation(icosahedron)
-  chairAnimation(chair);
-  worldState.starsState.active && starsAnimation(stars);
+  // run the "built in" animations
+  icosahedronAnimation()
+  chairAnimation();
+  worldState.starsState.active && starsAnimation();
 
   stats && stats.update();
 }
@@ -190,17 +193,17 @@ function starsAnimation() {
   // if you reach the limit (f = 1/100 distance), put distance back at the limit and change direction
   f < -1 && (d = !d, worldState.starsState.distance = -100);
   f > 1 && (d = !d, worldState.starsState.distance = 100);
-  group.rotation.x += 0.0002;
-  group.rotation.y -= 0.0003;
-  group.rotation.z += 0.00027;
+  starsGroup.rotation.x += 0.0002;
+  starsGroup.rotation.y -= 0.0003;
+  starsGroup.rotation.z += 0.00027;
 }
 
-function icosahedronAnimation(icosahedron) {
+function icosahedronAnimation() {
   icosahedron && (icosahedron.rotation.y += 0.01);
   icosahedron && (icosahedron.rotation.z += 0.007);
 }
 
-function chairAnimation(chair) {
+function chairAnimation() {
   chair && (
     chair.rotation.x += 0.01
     // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),

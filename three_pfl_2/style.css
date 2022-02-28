@@ -14,10 +14,10 @@ main {
 }
 
 p {
-  overflow-wrap: break-word;
+  /* overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
-  hyphens: auto;
+  hyphens: auto; */
 }
 
 header {
@@ -65,7 +65,7 @@ header {
   background-color: rgba(240, 248, 255, 0.13);
 }
 
-.textBlock {
+.projectTextBlock {
   flex-grow: 2;
 }
 
