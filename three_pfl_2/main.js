@@ -1,4 +1,6 @@
 // RIGHT /UP /TOWARDS ME ;)
+// starMaterial = whiteMaterial for now
+
 import '/style.css'
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -71,10 +73,10 @@ scene.add(icosahedron)
 let stars = [];
 const starsGroup = new THREE.Group();
 
+const starGeometry = new THREE.OctahedronGeometry(0.25);
+const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
 function addStar() {
-  const geometry = new THREE.OctahedronGeometry(0.25);
-  const material = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
-  const star = new THREE.Mesh(geometry, material);
+  const star = new THREE.Mesh(starGeometry, starMaterial);
   const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
   star.name = `star`;
   star.position.set(x, y, z);
@@ -96,11 +98,11 @@ const cubesGroup = new THREE.Group();
 
 let cubeZPosition = -20;
 const cubeGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-const redCubeMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, wireframe: true })
-const cubeMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
+const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, wireframe: true })
+const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
 function addCube() {
   const cube = new THREE.Mesh((cubeGeometry), 
-  (cubeZPosition % 5 === 0 ? redCubeMaterial : cubeMaterial));
+  (cubeZPosition % 5 === 0 ? redMaterial : whiteMaterial));
   const [wi, he, de] = [1, 1, 1]
   cube.name = `cube`;
   cube.position.set(2, cubeZPosition, 2);
