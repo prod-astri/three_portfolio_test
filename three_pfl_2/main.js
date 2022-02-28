@@ -165,6 +165,7 @@ function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
   
+  // run the bass animation
   delta = clock.getDelta();
   (mixer && worldState.bassState.active) && mixer.update(delta);
 
@@ -173,8 +174,8 @@ function animate() {
   worldState.starsState.active && starsAnimation(stars);
 
   group.rotation.x += 0.0002;
-  group.rotation.y += 0.0003;
-  group.rotation.z += 0.0001;
+  group.rotation.y -= 0.0003;
+  group.rotation.z += 0.00027;
 
   stats && stats.update();
 }

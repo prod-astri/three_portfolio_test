@@ -1,44 +1,72 @@
 canvas {
-  position:fixed;
+  position: fixed;
   top: 0;
   left: 0;
 }
 
 main {
   font-family: 'Roboto Mono', monospace;
-  width:100%;
+  width: 100%;
   position: absolute;
-  color:#f0f8ff;
+  color: #f0f8ff;
+}
+
+p {
   overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
 header {
-  display:flex;
+  margin: 10px;
+  display: flex;
+  align-items: center;
 }
 
-/* #headerButtons{
+#headerText {
+  flex-grow: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-} */
+#headerText > p {
+  text-align: center;
+  flex-basis: 50%;
+  flex-shrink: 2;
+  margin: 10px;
+}
 
-.projectBlock{
-  display:flex;
+#headerButtons {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.projectBlock {
+  display: flex;
+  flex-wrap: wrap-reverse;
   margin: 10px;
   color: aliceblue;
   background-color: rgba(240, 248, 255, 0.3);
 }
 
-.textBlock{
+.textBlock {
   flex-grow: 2;
 }
 
 img {
-  min-width:30%;
-  max-width: 300px;
+  flex-grow: 1;
+  align-self: center;
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 500px;
+  max-height: 500px;
   margin: 20px;
 }
 
 button {
   background-color: black;
   color: aliceblue;
-  min-width:10rem;
+  min-width: 10rem;
 }
