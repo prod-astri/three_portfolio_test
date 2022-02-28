@@ -26,14 +26,24 @@ const worldState = {
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
-let mixer;
-let clock = new THREE.Clock();
-// THREE STATS
 const stats = new Stats();
 
+
+// ANIMATION SETUP
+let mixer;
+let clock = new THREE.Clock();
+
+
+// BUTTONS
 document.getElementById("statsButton").onclick = function () {
   worldState.statsOn ? container.removeChild(stats.dom) : container.appendChild(stats.dom);
   worldState.statsOn = !worldState.statsOn;
+};
+document.getElementById("starsButton").onclick = function () {
+  worldState.starsState.active = !worldState.starsState.active
+};
+document.getElementById("bassButton").onclick = function () {
+  worldState.bassState.active = !worldState.bassState.active
 };
 
 
@@ -47,6 +57,7 @@ window.onresize = function () {
   renderer.setSize(window.innerWidth, window.innerHeight);
 };
 
+
 // LIGHTING AND POINTERS
 const pointLight = new THREE.PointLight(0xffffff)
 const ambientLight = new THREE.AmbientLight(0xffffff)
@@ -57,19 +68,22 @@ scene.add(lightHelper, gridHelper)
 pointLight.position.set(0, 4, 0)
 
 
-// INITIAL POSITIONING
+// CAMERA POSITIONING AND TRACKING
 camera.position.set(0, 0, 10);
 camera.rotation.x = 0;
 
-function trackMovement() {
-  // the value will always be negative
-  const t = -1*document.body.getBoundingClientRect().top;
-  console.log("t: " , t)
+function trackScrolling() {
+  // the value of getBoundingClientRect().top will always be negative
+  const scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
+  // the factor is arbitrary for now
+  camera.position.y = 0 - scrolledFromTop / 230
 }
-document.body.onscroll = trackMovement
+
+document.body.onscroll = trackScrolling
+
 
 // GEOMETRIES
-const geometry = new THREE.IcosahedronGeometry(0.6)
+const geometry = new THREE.IcosahedronGeometry(0.5)
 const material = new THREE.MeshBasicMaterial({ color: 0xfaafa00, wireframe: true });
 const icosahedron = new THREE.Mesh(geometry, material);
 scene.add(icosahedron)
@@ -77,7 +91,6 @@ scene.add(icosahedron)
 
 let stars = [];
 const starsGroup = new THREE.Group();
-
 const starGeometry = new THREE.OctahedronGeometry(0.25);
 const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
 function addStar() {
@@ -94,17 +107,16 @@ function addStar() {
 
 Array(100).fill().forEach(addStar)
 scene.add(starsGroup)
-document.getElementById("starsButton").onclick = function () {
-  worldState.starsState.active = !worldState.starsState.active
-};
+
 
 let cubes = [];
 let cubeZPosition = -30;
 const cubesGroup = new THREE.Group();
 
 const cubeGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, wireframe: true })
-const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
+const redMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: false })
+const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: false })
+
 function addCube() {
   const cube = new THREE.Mesh((cubeGeometry),
     (cubeZPosition % 5 === 0 ? redMaterial : whiteMaterial));
@@ -118,25 +130,22 @@ function addCube() {
 Array(40).fill().forEach(addCube)
 scene.add(cubesGroup)
 
+
 // OBJECT LOADERS
-let chair;
 const loader = new GLTFLoader();
+
+let chair;
 loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
   chair = gltf.scene;
   scene.add(chair);
-
   // const chairControls = new OrbitControls(chair, renderer.domElement);
   chair.position.set(-2, 0, 0);
   console.log('chair loaded')
 }, function (xhr) {
-  console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
+  // console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
 }, function (error) {
   console.error(error);
 });
-
-document.getElementById("bassButton").onclick = function () {
-  worldState.bassState.active = !worldState.bassState.active
-};
 
 let bass;
 loader.load('./3d_models/anibass.glb', function (gltf) {
@@ -152,7 +161,7 @@ loader.load('./3d_models/anibass.glb', function (gltf) {
   bass.position.set(2, 0, 0);
   console.log('bass loaded')
 }, function (xhr) {
-  console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
+  // console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
 }, function (error) {
   console.error(error);
 });
@@ -184,6 +193,7 @@ function animate() {
 // d changes the direction of the stars
 let f;
 let d = true;
+
 function starsAnimation() {
   f = worldState.starsState.distance * 0.01;
   stars.forEach(function (s) {
@@ -194,7 +204,7 @@ function starsAnimation() {
     s.position.z = s.originalPosition.z * f;
   })
   // depending on d, invert the direction
-  d ? worldState.starsState.distance += 0.1 : worldState.starsState.distance -= 0.1
+  d ? worldState.starsState.distance += 0.07 : worldState.starsState.distance -= 0.07
   // if you reach the limit (f = 1/100 distance), put distance back at the limit and change direction
   f < -1 && (d = !d, worldState.starsState.distance = -100);
   f > 1 && (d = !d, worldState.starsState.distance = 100);

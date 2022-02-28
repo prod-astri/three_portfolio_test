@@ -14,10 +14,10 @@ main {
 }
 
 p {
-  /* overflow-wrap: break-word;
+  overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
-  hyphens: auto; */
+  hyphens: auto;
 }
 
 header {
