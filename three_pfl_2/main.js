@@ -173,10 +173,6 @@ function animate() {
   chairAnimation(chair);
   worldState.starsState.active && starsAnimation(stars);
 
-  group.rotation.x += 0.0002;
-  group.rotation.y -= 0.0003;
-  group.rotation.z += 0.00027;
-
   stats && stats.update();
 }
 
@@ -193,9 +189,14 @@ function starsAnimation() {
     s.position.y = s.originalPosition.y * f;
     s.position.z = s.originalPosition.z * f;
   })
+  // depending on d, invert the direction
   d ? worldState.starsState.distance += 0.1 : worldState.starsState.distance -= 0.1
+  // if you reach the limit (f = 1/100 distance), put distance back at the limit and change direction
   f < -1 && (d = !d, worldState.starsState.distance = -100);
   f > 1 && (d = !d, worldState.starsState.distance = 100);
+  group.rotation.x += 0.0002;
+  group.rotation.y -= 0.0003;
+  group.rotation.z += 0.00027;
 }
 
 function icosahedronAnimation(icosahedron) {
