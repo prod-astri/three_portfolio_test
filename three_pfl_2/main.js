@@ -26,7 +26,7 @@ const worldState = {
     distance: 100
   },
   bassState: {
-    active:true
+    active: true
   }
 }
 
@@ -40,8 +40,7 @@ let clock = new THREE.Clock();
 // THREE STATS
 const stats = new Stats();
 
-document.getElementById("statsButton").onclick = function () { toggleStats() };
-function toggleStats() {
+document.getElementById("statsButton").onclick = function () {
   if (worldState.statsOn) {
     container.removeChild(stats.dom);
     worldState.statsOn = false;
@@ -49,8 +48,8 @@ function toggleStats() {
     container.appendChild(stats.dom)
     worldState.statsOn = true;
   }
-  // console.log("// statsOn: " + worldState.statsOn)
-}
+};
+
 
 // RENDERER, WINDOW SIZE
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
@@ -101,10 +100,10 @@ function addStar() {
   stars.push(star)
   group.add(star)
 }
-scene.add(group)
 
 Array(100).fill().forEach(addStar)
-
+group.add(icosahedron)
+scene.add(group)
 document.getElementById("starsButton").onclick = function () {
   worldState.starsState.active = !worldState.starsState.active
 };
@@ -115,12 +114,7 @@ let chair;
 const loader = new GLTFLoader();
 loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
   chair = gltf.scene;
-  // NOT WORKING - to show gltf as wireframe?
-  // chair.traverse((node) => {
-    //   if (!node.isMesh) return;
-    //   node.material.wireframe = true;
-    // });
-    scene.add(chair);
+  scene.add(chair);
 
   // const chairControls = new OrbitControls(chair, renderer.domElement);
   chair.position.set(-2, 0, 0);
@@ -140,8 +134,9 @@ const bassLoader = new GLTFLoader();
 bassLoader.load('./3d_models/anibass.glb', function (gltf) {
   bass = gltf.scene;
   scene.add(bass);
-  mixer = new THREE.AnimationMixer(gltf.scene);
 
+  // necessary for the imported animations
+  mixer = new THREE.AnimationMixer(gltf.scene);
   gltf.animations.forEach((clip) => {
     mixer.clipAction(clip).play();
   });
@@ -149,7 +144,7 @@ bassLoader.load('./3d_models/anibass.glb', function (gltf) {
   bass.position.set(2, 0, 0);
   console.log('bass loaded')
 }, function (xhr) {
-  console.log(('bass ', xhr.loaded / xhr.total * 100), "% bass loaded")
+  console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
 }, function (error) {
   console.error(error);
 });
@@ -164,11 +159,12 @@ let delta;
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
-  
-  // run the bass animation
+
+  // run the imported animation (bass)
   delta = clock.getDelta();
   (mixer && worldState.bassState.active) && mixer.update(delta);
 
+  // run the built in animations
   icosahedronAnimation(icosahedron)
   chairAnimation(chair);
   worldState.starsState.active && starsAnimation(stars);
