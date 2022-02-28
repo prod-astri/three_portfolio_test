@@ -58,10 +58,15 @@ pointLight.position.set(0, 4, 0)
 
 
 // INITIAL POSITIONING
-camera.position.z = 5;
-camera.position.y = 2;
-camera.rotation.x = -0.4;
+camera.position.set(0, 0, 10);
+camera.rotation.x = 0;
 
+function trackMovement() {
+  // the value will always be negative
+  const t = -1*document.body.getBoundingClientRect().top;
+  console.log("t: " , t)
+}
+document.body.onscroll = trackMovement
 
 // GEOMETRIES
 const geometry = new THREE.IcosahedronGeometry(0.6)
@@ -94,20 +99,18 @@ document.getElementById("starsButton").onclick = function () {
 };
 
 let cubes = [];
+let cubeZPosition = -30;
 const cubesGroup = new THREE.Group();
 
-let cubeZPosition = -20;
 const cubeGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, wireframe: true })
 const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
 function addCube() {
-  const cube = new THREE.Mesh((cubeGeometry), 
-  (cubeZPosition % 5 === 0 ? redMaterial : whiteMaterial));
-  const [wi, he, de] = [1, 1, 1]
+  const cube = new THREE.Mesh((cubeGeometry),
+    (cubeZPosition % 5 === 0 ? redMaterial : whiteMaterial));
   cube.name = `cube`;
   cube.position.set(2, cubeZPosition, 2);
   cubeZPosition++
-  console.log(cubeZPosition);
   cubes.push(cube)
   cubesGroup.add(cube)
 }
