@@ -103,7 +103,7 @@ function addStar() {
 }
 scene.add(group)
 
-Array(200).fill().forEach(addStar)
+Array(100).fill().forEach(addStar)
 
 document.getElementById("starsButton").onclick = function () {
   worldState.starsState.active = !worldState.starsState.active
