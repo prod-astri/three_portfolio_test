@@ -12,11 +12,11 @@ import Stats from 'three/examples/jsm/libs/stats.module.js';
 const worldState = {
   statsOn: false,
   starsState: {
-    active: true,
+    active: false,
     distance: 100
   },
   bassState: {
-    active: true
+    active: false
   },
   scrolledFromTop: 0,
 }
@@ -98,7 +98,10 @@ const starGeometry = new THREE.OctahedronGeometry(0.25);
 const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
 function addStar() {
   const star = new THREE.Mesh(starGeometry, starMaterial);
-  const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(100));
+  const x = THREE.MathUtils.randFloatSpread(100)
+  const y = Math.abs(THREE.MathUtils.randFloatSpread(100))
+  const z = THREE.MathUtils.randFloatSpread(100) ;
+  // y = Math.abs(y);
   star.name = `star`;
   star.position.set(x, y, z);
   star.rotation.x = [y]
@@ -108,7 +111,7 @@ function addStar() {
   starsGroup.add(star)
 }
 
-Array(100).fill().forEach(addStar)
+Array(200).fill().forEach(addStar)
 scene.add(starsGroup)
 
 
@@ -203,7 +206,7 @@ function starsAnimation() {
     // s.rotation.x += 0.1;
     s.rotation.z += 0.07;
     s.position.x = s.originalPosition.x * f;
-    s.position.y = s.originalPosition.y * f;
+    s.position.y = Math.abs(s.originalPosition.y * f);
     s.position.z = s.originalPosition.z * f;
   })
   // depending on d, invert the direction
@@ -211,9 +214,9 @@ function starsAnimation() {
   // if you reach the limit (f = 1/100 distance), put distance back at the limit and change direction
   f < -1 && (d = !d, worldState.starsState.distance = -100);
   f > 1 && (d = !d, worldState.starsState.distance = 100);
-  starsGroup.rotation.x += 0.0002;
-  starsGroup.rotation.y -= 0.0003;
-  starsGroup.rotation.z += 0.00027;
+  // starsGroup.rotation.x += 0.0002;
+  starsGroup.rotation.y -= 0.001;
+  // starsGroup.rotation.z += 0.00027;
 }
 
 function icosahedronAnimation() {
