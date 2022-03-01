@@ -17,7 +17,8 @@ const worldState = {
   },
   bassState: {
     active: true
-  }
+  },
+  scrolledFromTop: 0,
 }
 
 
@@ -27,6 +28,29 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
 const stats = new Stats();
+
+
+
+// RENDERER, WINDOW SIZE, SCROLLING
+const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+window.onresize = function () {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  ////
+  trackScrolling();
+};
+
+function trackScrolling() {
+  // the value of getBoundingClientRect().top will always be negative
+  worldState.scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
+  // the factor is arbitrary for now
+  camera.position.y = 0 - worldState.scrolledFromTop / 230
+}
+
+document.body.onscroll = trackScrolling
 
 
 // ANIMATION SETUP
@@ -47,17 +71,6 @@ document.getElementById("bassButton").onclick = function () {
 };
 
 
-// RENDERER, WINDOW SIZE
-const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setSize(window.innerWidth, window.innerHeight);
-window.onresize = function () {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-};
-
-
 // LIGHTING AND POINTERS
 const pointLight = new THREE.PointLight(0xffffff)
 const ambientLight = new THREE.AmbientLight(0xffffff)
@@ -68,19 +81,9 @@ scene.add(lightHelper, gridHelper)
 pointLight.position.set(0, 4, 0)
 
 
-// CAMERA POSITIONING AND TRACKING
+// CAMERA INITIAL POSITIONING
 camera.position.set(0, 0, 10);
 camera.rotation.x = 0;
-
-function trackScrolling() {
-  // the value of getBoundingClientRect().top will always be negative
-  const scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
-  // the factor is arbitrary for now
-  camera.position.y = 0 - scrolledFromTop / 230
-}
-
-document.body.onscroll = trackScrolling
-
 
 // GEOMETRIES
 const geometry = new THREE.IcosahedronGeometry(0.5)
