@@ -30,7 +30,6 @@ const container = document.getElementById('container')
 const stats = new Stats();
 
 
-
 // RENDERER, WINDOW SIZE, SCROLLING
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg') });
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -45,8 +44,8 @@ window.onresize = function () {
 
 function trackScrolling() {
   // the value of getBoundingClientRect().top will always be negative
+  // the division factor is arbitrary for now
   worldState.scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
-  // the factor is arbitrary for now
   camera.position.y = 0 - worldState.scrolledFromTop / 230
 }
 
@@ -85,9 +84,23 @@ pointLight.position.set(0, 4, 0)
 camera.position.set(0, 0, 10);
 camera.rotation.x = 0;
 
+
+  const bgLoader = new THREE.CubeTextureLoader();
+  const bgTexture = bgLoader.load([
+    '/pictures/sides.jpg',
+    '/pictures/sides.jpg',
+    '/pictures/top.jpg',
+    '/pictures/bottom.jpg',
+    '/pictures/sides.jpg',
+    '/pictures/sides.jpg',
+
+  ]);
+  scene.background = bgTexture;
+
+
 // GEOMETRIES
 const geometry = new THREE.IcosahedronGeometry(0.5)
-const material = new THREE.MeshBasicMaterial({ color: 0xfaafa00, wireframe: true });
+const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
 const icosahedron = new THREE.Mesh(geometry, material);
 scene.add(icosahedron)
 
@@ -95,7 +108,7 @@ scene.add(icosahedron)
 let stars = [];
 const starsGroup = new THREE.Group();
 const starGeometry = new THREE.OctahedronGeometry(0.25);
-const starMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, wireframe: true })
+const starMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true })
 function addStar() {
   const star = new THREE.Mesh(starGeometry, starMaterial);
   const x = THREE.MathUtils.randFloatSpread(100)
@@ -140,18 +153,18 @@ scene.add(cubesGroup)
 // OBJECT LOADERS
 const loader = new GLTFLoader();
 
-let chair;
-loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
-  chair = gltf.scene;
-  scene.add(chair);
-  // const chairControls = new OrbitControls(chair, renderer.domElement);
-  chair.position.set(-2, 0, 0);
-  console.log('chair loaded')
-}, function (xhr) {
-  // console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
-}, function (error) {
-  console.error(error);
-});
+// let chair;
+// loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
+//   chair = gltf.scene;
+//   scene.add(chair);
+//   // const chairControls = new OrbitControls(chair, renderer.domElement);
+//   chair.position.set(-2, 0, 0);
+//   console.log('chair loaded')
+// }, function (xhr) {
+//   // console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
+// }, function (error) {
+//   console.error(error);
+// });
 
 let bass;
 loader.load('./3d_models/anibass.glb', function (gltf) {
@@ -189,8 +202,9 @@ function animate() {
 
   // run the "built in" animations
   icosahedronAnimation()
-  chairAnimation();
+  // chairAnimation();
   worldState.starsState.active && starsAnimation();
+ 
 
   stats && stats.update();
 }
@@ -224,16 +238,16 @@ function icosahedronAnimation() {
   icosahedron && (icosahedron.rotation.z += 0.007);
 }
 
-function chairAnimation() {
-  chair && (
-    chair.rotation.x += 0.01
-    // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
-    // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
-    // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
-    // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
-    // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
-    // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
-  );
-}
+// function chairAnimation() {
+//   chair && (
+//     chair.rotation.x += 0.01
+//     // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
+//     // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
+//     // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
+//     // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
+//     // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
+//     // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
+//   );
+// }
 
 animate()
