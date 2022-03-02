@@ -4,8 +4,10 @@
 import '/style.css'
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { Group } from 'three';
 
 
 // PAGE STATE
@@ -184,6 +186,50 @@ loader.load('./3d_models/anibass.glb', function (gltf) {
 }, function (error) {
   console.error(error);
 });
+
+
+// instantiate a loader
+const svgLoader = new SVGLoader();
+
+// load a SVG resource
+const svgGroup = new THREE.Group();
+svgLoader.load('/pictures/sd.svg',	function ( data ) {
+		const paths = data.paths;
+
+		for ( let i = 0; i < paths.length; i ++ ) {
+			const path = paths[ i ];
+			const svgMaterial = new THREE.MeshBasicMaterial( {
+				color: 0xff0000, // path.color
+				side: THREE.DoubleSide,
+				depthWrite: false
+			} );
+
+			const shapes = SVGLoader.createShapes( path );
+
+			for ( let j = 0; j < shapes.length; j ++ ) {
+				const shape = shapes[ j ];
+				const svgGeometry = new THREE.ShapeGeometry( shape );
+				const svgMesh = new THREE.Mesh( svgGeometry, svgMaterial );
+				svgGroup.add( svgMesh );
+			}
+		}
+		scene.add( svgGroup );
+    svgGroup.rotateX(-Math.PI);
+	},
+	// called when loading is in progresses
+	function ( xhr ) {
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% sound_design loaded' );
+	},
+	function ( error ) {
+		console.log( error );
+	}
+);
+
+// the number comes from the px width in the svg?
+svgGroup.scale.set(0.005, 0.005, 0.005)
+svgGroup.position.x = -3.600;
+svgGroup.position.y = 0.8;
+svgGroup.position.z = -10;
 
 
 // CONTROLS
