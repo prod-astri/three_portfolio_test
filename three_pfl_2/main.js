@@ -7,7 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
-import { Group } from 'three';
+
 
 
 // PAGE STATE
@@ -155,18 +155,19 @@ scene.add(cubesGroup)
 // OBJECT LOADERS
 const loader = new GLTFLoader();
 
-// let chair;
-// loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
-//   chair = gltf.scene;
-//   scene.add(chair);
-//   // const chairControls = new OrbitControls(chair, renderer.domElement);
-//   chair.position.set(-2, 0, 0);
-//   console.log('chair loaded')
-// }, function (xhr) {
-//   // console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
-// }, function (error) {
-//   console.error(error);
-// });
+let chair;
+loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
+  chair = gltf.scene;
+  scene.add(chair);
+  // const chairControls = new OrbitControls(chair, renderer.domElement);
+  chair.position.set(-2, 0, 0);
+  console.log('chair loaded')
+}, function (xhr) {
+  // console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
+}, function (error) {
+  console.error(error);
+});
+
 
 let bass;
 loader.load('./3d_models/anibass.glb', function (gltf) {
@@ -188,10 +189,8 @@ loader.load('./3d_models/anibass.glb', function (gltf) {
 });
 
 
-// instantiate a loader
 const svgLoader = new SVGLoader();
 
-// load a SVG resource
 const svgGroup = new THREE.Group();
 svgLoader.load('/pictures/sd.svg',	function ( data ) {
 		const paths = data.paths;
@@ -199,24 +198,23 @@ svgLoader.load('/pictures/sd.svg',	function ( data ) {
 		for ( let i = 0; i < paths.length; i ++ ) {
 			const path = paths[ i ];
 			const svgMaterial = new THREE.MeshBasicMaterial( {
-				color: 0xff0000, // path.color
+				color: 'red', // path.color
 				side: THREE.DoubleSide,
-				depthWrite: false
+				depthWrite: false,
 			} );
 
 			const shapes = SVGLoader.createShapes( path );
-
 			for ( let j = 0; j < shapes.length; j ++ ) {
 				const shape = shapes[ j ];
 				const svgGeometry = new THREE.ShapeGeometry( shape );
 				const svgMesh = new THREE.Mesh( svgGeometry, svgMaterial );
+        
 				svgGroup.add( svgMesh );
 			}
 		}
 		scene.add( svgGroup );
     svgGroup.rotateX(-Math.PI);
 	},
-	// called when loading is in progresses
 	function ( xhr ) {
 		console.log( ( xhr.loaded / xhr.total * 100 ) + '% sound_design loaded' );
 	},
@@ -225,8 +223,7 @@ svgLoader.load('/pictures/sd.svg',	function ( data ) {
 	}
 );
 
-// the number comes from the px width in the svg?
-svgGroup.scale.set(0.005, 0.005, 0.005)
+svgGroup.scale.set(0.005, 0.005, 2)
 svgGroup.position.x = -3.600;
 svgGroup.position.y = 0.8;
 svgGroup.position.z = -10;
@@ -248,7 +245,7 @@ function animate() {
 
   // run the "built in" animations
   icosahedronAnimation()
-  // chairAnimation();
+  chairAnimation();
   worldState.starsState.active && starsAnimation();
  
 
@@ -284,16 +281,16 @@ function icosahedronAnimation() {
   icosahedron && (icosahedron.rotation.z += 0.007);
 }
 
-// function chairAnimation() {
-//   chair && (
-//     chair.rotation.x += 0.01
-//     // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
-//     // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
-//     // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
-//     // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
-//     // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
-//     // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
-//   );
-// }
+function chairAnimation() {
+  chair && (
+    chair.rotation.x += 0.01
+    // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
+    // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
+    // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
+    // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
+    // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
+    // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
+  );
+}
 
 animate()
