@@ -87,17 +87,17 @@ camera.position.set(0, 0, 10);
 camera.rotation.x = 0;
 
 
-  const bgLoader = new THREE.CubeTextureLoader();
-  const bgTexture = bgLoader.load([
-    '/pictures/sides.jpg',
-    '/pictures/sides.jpg',
-    '/pictures/top.jpg',
-    '/pictures/bottom.jpg',
-    '/pictures/sides.jpg',
-    '/pictures/sides.jpg',
+const bgLoader = new THREE.CubeTextureLoader();
+const bgTexture = bgLoader.load([
+  '/pictures/sky_sides.jpg',
+  '/pictures/sky_sides.jpg',
+  '/pictures/sky_top.jpg',
+  '/pictures/sky_bottom.jpg',
+  '/pictures/sky_sides.jpg',
+  '/pictures/sky_sides.jpg',
 
-  ]);
-  scene.background = bgTexture;
+]);
+scene.background = bgTexture;
 
 
 // GEOMETRIES
@@ -115,7 +115,7 @@ function addStar() {
   const star = new THREE.Mesh(starGeometry, starMaterial);
   const x = THREE.MathUtils.randFloatSpread(100)
   const y = Math.abs(THREE.MathUtils.randFloatSpread(100))
-  const z = THREE.MathUtils.randFloatSpread(100) ;
+  const z = THREE.MathUtils.randFloatSpread(100);
   // y = Math.abs(y);
   star.name = `star`;
   star.position.set(x, y, z);
@@ -190,43 +190,81 @@ loader.load('./3d_models/anibass.glb', function (gltf) {
 
 
 const svgLoader = new SVGLoader();
+const soundDesignGroup = new THREE.Group();
 
-const svgGroup = new THREE.Group();
-svgLoader.load('/pictures/sd.svg',	function ( data ) {
-		const paths = data.paths;
+svgLoader.load('/pictures/sd.svg', function (data) {
+  const paths = data.paths;
 
-		for ( let i = 0; i < paths.length; i ++ ) {
-			const path = paths[ i ];
-			const svgMaterial = new THREE.MeshBasicMaterial( {
-				color: 'red', // path.color
-				side: THREE.DoubleSide,
-				depthWrite: false,
-			} );
+  for (let i = 0; i < paths.length; i++) {
+    const path = paths[i];
+    const svgMaterial = new THREE.MeshBasicMaterial({
+      color: 'red', // path.color
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    });
 
-			const shapes = SVGLoader.createShapes( path );
-			for ( let j = 0; j < shapes.length; j ++ ) {
-				const shape = shapes[ j ];
-				const svgGeometry = new THREE.ShapeGeometry( shape );
-				const svgMesh = new THREE.Mesh( svgGeometry, svgMaterial );
-        
-				svgGroup.add( svgMesh );
-			}
-		}
-		scene.add( svgGroup );
-    svgGroup.rotateX(-Math.PI);
-	},
-	function ( xhr ) {
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% sound_design loaded' );
-	},
-	function ( error ) {
-		console.log( error );
-	}
+    const shapes = SVGLoader.createShapes(path);
+    for (let j = 0; j < shapes.length; j++) {
+      const shape = shapes[j];
+      const svgGeometry = new THREE.ShapeGeometry(shape);
+      const svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
+
+      soundDesignGroup.add(svgMesh);
+    }
+  }
+  scene.add(soundDesignGroup);
+  soundDesignGroup.rotateX(-Math.PI);
+},
+  function (xhr) {
+    console.log((xhr.loaded / xhr.total * 100) + '% sound_design loaded');
+  },
+  function (error) {
+    console.log(error);
+  }
 );
 
-svgGroup.scale.set(0.005, 0.005, 2)
-svgGroup.position.x = -3.600;
-svgGroup.position.y = 0.8;
-svgGroup.position.z = -10;
+soundDesignGroup.scale.set(0.005, 0.005, 2)
+soundDesignGroup.position.x = -3.600;
+soundDesignGroup.position.y = 0.8;
+soundDesignGroup.position.z = -10;
+
+// const sunGroup = new THREE.Group();
+
+// svgLoader.load('/pictures/black_sun.svg', function (data) {
+//   const paths = data.paths;
+
+//   for (let i = 0; i < paths.length; i++) {
+//     const path = paths[i];
+//     const svgMaterial = new THREE.MeshBasicMaterial({
+//       color: 'green', // path.color
+//       side: THREE.DoubleSide,
+//       depthWrite: false,
+//     });
+
+//     const shapes = SVGLoader.createShapes(path);
+//     for (let j = 0; j < shapes.length; j++) {
+//       const shape = shapes[j];
+//       const svgGeometry = new THREE.ShapeGeometry(shape);
+//       const svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
+
+//       sunGroup.add(svgMesh);
+//     }
+//   }
+//   scene.add(sunGroup);
+//   sunGroup.rotateX(-Math.PI);
+// },
+//   function (xhr) {
+//     console.log((xhr.loaded / xhr.total * 100) + '% sound_design loaded');
+//   },
+//   function (error) {
+//     console.log(error);
+//   }
+// );
+
+// sunGroup.scale.set(0.005, 0.005, 2)
+// sunGroup.position.x = -10.00;
+// sunGroup.position.y = 0.8;
+// sunGroup.position.z = -10;
 
 
 // CONTROLS
@@ -247,7 +285,7 @@ function animate() {
   icosahedronAnimation()
   // chairAnimation();
   worldState.starsState.active && starsAnimation();
- 
+
 
   stats && stats.update();
 }
@@ -260,7 +298,6 @@ let d = true;
 function starsAnimation() {
   f = worldState.starsState.distance * 0.01;
   stars.forEach(function (s) {
-    // s.rotation.x += 0.1;
     s.rotation.z += 0.07;
     s.position.x = s.originalPosition.x * f;
     s.position.y = Math.abs(s.originalPosition.y * f);
@@ -271,9 +308,7 @@ function starsAnimation() {
   // if you reach the limit (f = 1/100 distance), put distance back at the limit and change direction
   f < -1 && (d = !d, worldState.starsState.distance = -100);
   f > 1 && (d = !d, worldState.starsState.distance = 100);
-  // starsGroup.rotation.x += 0.0002;
   starsGroup.rotation.y -= 0.001;
-  // starsGroup.rotation.z += 0.00027;
 }
 
 function icosahedronAnimation() {
@@ -281,16 +316,16 @@ function icosahedronAnimation() {
   icosahedron && (icosahedron.rotation.z += 0.007);
 }
 
-// function chairAnimation() {
-//   chair && (
-//     chair.rotation.x += 0.01
-//     // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
-//     // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
-//     // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
-//     // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
-//     // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
-//     // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
-//   );
-// }
+function chairAnimation() {
+  chair && (
+    chair.rotation.x += 0.01
+    // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
+    // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
+    // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
+    // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
+    // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
+    // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
+  );
+}
 
 animate()
