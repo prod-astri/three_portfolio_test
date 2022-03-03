@@ -236,7 +236,7 @@ soundDesignGroup.position.z = -10;
 //   for (let i = 0; i < paths.length; i++) {
 //     const path = paths[i];
 //     const svgMaterial = new THREE.MeshBasicMaterial({
-//       color: 'green', // path.color
+//       color: 'white', // path.color
 //       side: THREE.DoubleSide,
 //       depthWrite: false,
 //     });
@@ -265,6 +265,34 @@ soundDesignGroup.position.z = -10;
 // sunGroup.position.x = -10.00;
 // sunGroup.position.y = 0.8;
 // sunGroup.position.z = -10;
+
+
+
+var img = new Image();
+img.onload = function() {
+  alert(this.width + 'x' + this.height);
+}
+img.src = '/pictures/HAAA_003_still_purple.png';
+console.log(img)
+// instantiate a loader
+const textureLoader = new THREE.TextureLoader();
+var imgMaterial = new THREE.MeshLambertMaterial({
+  map: textureLoader.load('/pictures/HAAA_003_still_purple.png')
+});
+
+// create a plane geometry for the image with a width of 10
+// and a height that preserves the image's aspect ratio
+var imgGeometry = new THREE.PlaneGeometry(10, 10);
+
+// combine our image geometry and material into a mesh
+var imgMesh = new THREE.Mesh(imgGeometry, imgMaterial);
+
+// set the position of the image mesh in the x,y,z dimensions
+imgMesh.position.set(0,0,0)
+
+// add the image to the scene
+scene.add(imgMesh);
+// load a image resource
 
 
 // CONTROLS
