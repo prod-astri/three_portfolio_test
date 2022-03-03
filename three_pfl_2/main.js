@@ -267,32 +267,34 @@ soundDesignGroup.position.z = -10;
 // sunGroup.position.z = -10;
 
 
-
-var img = new Image();
-img.onload = function() {
-  alert(this.width + 'x' + this.height);
-}
-img.src = '/pictures/HAAA_003_still_purple.png';
-console.log(img)
-// instantiate a loader
 const textureLoader = new THREE.TextureLoader();
-var imgMaterial = new THREE.MeshLambertMaterial({
-  map: textureLoader.load('/pictures/HAAA_003_still_purple.png')
-});
 
-// create a plane geometry for the image with a width of 10
-// and a height that preserves the image's aspect ratio
-var imgGeometry = new THREE.PlaneGeometry(10, 10);
+function loadImage(source, name, h, [x, y, z]) {
+  // this is to get the ratio for the plane size;
+  let img = new Image();
 
-// combine our image geometry and material into a mesh
-var imgMesh = new THREE.Mesh(imgGeometry, imgMaterial);
+  img.onload = function () {
 
-// set the position of the image mesh in the x,y,z dimensions
-imgMesh.position.set(0,0,0)
+    let ratio = (this.height / this.width);
 
-// add the image to the scene
-scene.add(imgMesh);
-// load a image resource
+    // this actually builds the mesh for THREE
+    let imgGeometry = new THREE.PlaneGeometry(h, h * ratio);
+    let imgMaterial = new THREE.MeshLambertMaterial({
+      map: textureLoader.load(source)
+    });
+
+    let imgMesh = new THREE.Mesh(imgGeometry, imgMaterial);
+    imgMesh.name = name
+    
+    imgMesh.position.set(x, y, z)
+    scene.add(imgMesh);
+  }
+
+  img.src = source;
+}
+
+loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 10, [0, 0, -1])
+loadImage('/pictures/share.jpg', 'share', 10, [0, 0, 0])
 
 
 // CONTROLS
