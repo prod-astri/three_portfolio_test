@@ -7,6 +7,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { loadImage } from './loadImage';
+import { loadSvg } from './loadSvg';
 
 
 
@@ -26,7 +28,7 @@ const worldState = {
 
 // CAMERA, SCENE SETUP
 // ( field of view, aspect ratio, near , and far camera frustrum )
-const scene = new THREE.Scene();
+export const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 const container = document.getElementById('container')
 const stats = new Stats();
@@ -189,41 +191,10 @@ loader.load('./3d_models/anibass.glb', function (gltf) {
 });
 
 
-const svgLoader = new SVGLoader();
 const soundDesignGroup = new THREE.Group();
 
-svgLoader.load('/pictures/sd.svg', function (data) {
-  const paths = data.paths;
+loadSvg('/pictures/sd.svg', soundDesignGroup, 0.005);
 
-  for (let i = 0; i < paths.length; i++) {
-    const path = paths[i];
-    const svgMaterial = new THREE.MeshBasicMaterial({
-      color: 'red', // path.color
-      side: THREE.DoubleSide,
-      depthWrite: false,
-    });
-
-    const shapes = SVGLoader.createShapes(path);
-    for (let j = 0; j < shapes.length; j++) {
-      const shape = shapes[j];
-      const svgGeometry = new THREE.ShapeGeometry(shape);
-      const svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
-
-      soundDesignGroup.add(svgMesh);
-    }
-  }
-  scene.add(soundDesignGroup);
-  soundDesignGroup.rotateX(-Math.PI);
-},
-  function (xhr) {
-    console.log((xhr.loaded / xhr.total * 100) + '% sound_design loaded');
-  },
-  function (error) {
-    console.log(error);
-  }
-);
-
-soundDesignGroup.scale.set(0.005, 0.005, 2)
 soundDesignGroup.position.x = -3.600;
 soundDesignGroup.position.y = 0.8;
 soundDesignGroup.position.z = -10;
@@ -267,31 +238,7 @@ soundDesignGroup.position.z = -10;
 // sunGroup.position.z = -10;
 
 
-const textureLoader = new THREE.TextureLoader();
-
-function loadImage(source, name, h, [x, y, z]) {
-  // this is to get the ratio for the plane size;
-  let img = new Image();
-
-  img.onload = function () {
-
-    let ratio = (this.height / this.width);
-
-    // this actually builds the mesh for THREE
-    let imgGeometry = new THREE.PlaneGeometry(h, h * ratio);
-    let imgMaterial = new THREE.MeshLambertMaterial({
-      map: textureLoader.load(source)
-    });
-
-    let imgMesh = new THREE.Mesh(imgGeometry, imgMaterial);
-    imgMesh.name = name
-    
-    imgMesh.position.set(x, y, z)
-    scene.add(imgMesh);
-  }
-
-  img.src = source;
-}
+export const textureLoader = new THREE.TextureLoader();
 
 loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 10, [0, 0, -1])
 loadImage('/pictures/share.jpg', 'share', 10, [0, 0, 0])
@@ -303,6 +250,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 // ANIMATION
 let delta;
+
+
+
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
