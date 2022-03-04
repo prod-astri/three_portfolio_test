@@ -9,6 +9,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 import { loadImage } from './loadImage';
 import { loadSvg } from './loadSvg';
+import { icosahedronAnimation } from './animations/icosahedronAnimation';
 
 
 
@@ -105,7 +106,7 @@ scene.background = bgTexture;
 // GEOMETRIES
 const geometry = new THREE.IcosahedronGeometry(0.5)
 const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-const icosahedron = new THREE.Mesh(geometry, material);
+export const icosahedron = new THREE.Mesh(geometry, material);
 scene.add(icosahedron)
 
 
@@ -172,28 +173,12 @@ const loader = new GLTFLoader();
 
 
 let bass;
-loader.load('./3d_models/anibass.glb', function (gltf) {
-  bass = gltf.scene;
-  scene.add(bass);
-
-  // necessary for the imported animations
-  mixer = new THREE.AnimationMixer(gltf.scene);
-  gltf.animations.forEach((clip) => {
-    mixer.clipAction(clip).play();
-  });
-
-  bass.position.set(2, 0, 0);
-  console.log('bass loaded')
-}, function (xhr) {
-  // console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
-}, function (error) {
-  console.error(error);
-});
+loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0])
 
 
 const soundDesignGroup = new THREE.Group();
-
-loadSvg('/pictures/sd.svg', soundDesignGroup, 0.005);
+// loadSvg(source, group, scale)
+loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', 0.005);
 
 soundDesignGroup.position.x = -3.600;
 soundDesignGroup.position.y = 0.8;
@@ -240,6 +225,7 @@ soundDesignGroup.position.z = -10;
 
 export const textureLoader = new THREE.TextureLoader();
 
+// loadImage(source, name, height, [x, y, z])
 loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 10, [0, 0, -1])
 loadImage('/pictures/share.jpg', 'share', 10, [0, 0, 0])
 
@@ -275,6 +261,29 @@ function animate() {
 let f;
 let d = true;
 
+function loadAnimatedGltf (source, container,  name, [x, y, z]){
+
+  loader.load(source, function (gltf) {
+    container = gltf.scene;
+    container.name = name
+    scene.add(container);
+  
+    // necessary for the imported animations
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    gltf.animations.forEach((clip) => {
+      mixer.clipAction(clip).play();
+    });
+  
+    container.position.set(x, y, z);
+    console.log(name , ' loaded')
+  }, function (xhr) {
+    // console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
+  }, function (error) {
+    console.error(error);
+  });
+}
+
+
 function starsAnimation() {
   f = worldState.starsState.distance * 0.01;
   stars.forEach(function (s) {
@@ -289,11 +298,6 @@ function starsAnimation() {
   f < -1 && (d = !d, worldState.starsState.distance = -100);
   f > 1 && (d = !d, worldState.starsState.distance = 100);
   starsGroup.rotation.y -= 0.001;
-}
-
-function icosahedronAnimation() {
-  icosahedron && (icosahedron.rotation.y += 0.01);
-  icosahedron && (icosahedron.rotation.z += 0.007);
 }
 
 function chairAnimation() {
