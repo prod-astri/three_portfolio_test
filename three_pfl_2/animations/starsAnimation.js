@@ -1,6 +1,8 @@
 import { worldState, stars, starsGroup } from '../main';
 
+// f is the factor of displacement of the stars
 let f;
+// d changes the direction of the stars
 let d = true;
 
 export function starsAnimation() {

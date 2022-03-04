@@ -14,6 +14,7 @@ import { loadSvg } from './loaders/loadSvg';
 
 import { icosahedronAnimation } from './animations/icosahedronAnimation';
 import { starsAnimation } from './animations/starsAnimation';
+import { loadGltf } from './loaders/loadGltf';
 // import { loadAnimatedGltf } from './loadAnimatedGltf';
 
 
@@ -55,7 +56,7 @@ window.onresize = function () {
 
 document.body.onscroll = trackScrolling
 function trackScrolling() {
-// the value of getBoundingClientRect().top will always be negative
+  // the value of getBoundingClientRect().top will always be negative
   // the division factor is arbitrary for now
   worldState.scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
   camera.position.y = 0 - worldState.scrolledFromTop / 230
@@ -162,76 +163,23 @@ scene.add(cubesGroup)
 
 
 // OBJECT LOADERS
+//   loadImage(source, name, h, [x, y, z])
+//   loadSvg(source, group, , name, scale, color)
+//   loadGltf(source, container, name, [x, y, z]) 
+//   loadAnimatedGltf (source, container,  name, [x, y, z])
+
 export const loader = new GLTFLoader();
+export const svgLoader = new SVGLoader();
+export const textureLoader = new THREE.TextureLoader();
 
-// let chair;
-// loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
-//   chair = gltf.scene;
-//   scene.add(chair);
-//   // const chairControls = new OrbitControls(chair, renderer.domElement);
-//   chair.position.set(-2, 0, 0);
-//   console.log('chair loaded')
-// }, function (xhr) {
-//   // console.log((xhr.loaded / xhr.total * 100), "%  chair loaded")
-// }, function (error) {
-//   console.error(error);
-// });
-
-
-let bass;
-//  loadAnimatedGltf (source, container,  name, [x, y, z]){
+let bass = [];
 loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0], mixer)
 
-export const svgLoader = new SVGLoader();
+let chair = [];
+loadGltf('./3d_models/messed_up_chair.glb', chair, 'chair', [-2, 0, 0])
+
 const soundDesignGroup = new THREE.Group();
-const soundDesignGroup2 = new THREE.Group();
-// loadSvg(source, group, , name, scale, color)
-loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', 0.005, 'blue');
-
-soundDesignGroup.position.x = -3.600;
-soundDesignGroup.position.y = 0.8;
-soundDesignGroup.position.z = -10;
-
-// const sunGroup = new THREE.Group();
-
-// svgLoader.load('/pictures/black_sun.svg', function (data) {
-//   const paths = data.paths;
-
-//   for (let i = 0; i < paths.length; i++) {
-//     const path = paths[i];
-//     const svgMaterial = new THREE.MeshBasicMaterial({
-//       color: 'white', // path.color
-//       side: THREE.DoubleSide,
-//       depthWrite: false,
-//     });
-
-//     const shapes = SVGLoader.createShapes(path);
-//     for (let j = 0; j < shapes.length; j++) {
-//       const shape = shapes[j];
-//       const svgGeometry = new THREE.ShapeGeometry(shape);
-//       const svgMesh = new THREE.Mesh(svgGeometry, svgMaterial);
-
-//       sunGroup.add(svgMesh);
-//     }
-//   }
-//   scene.add(sunGroup);
-//   sunGroup.rotateX(-Math.PI);
-// },
-//   function (xhr) {
-//     console.log((xhr.loaded / xhr.total * 100) + '% sound_design loaded');
-//   },
-//   function (error) {
-//     console.log(error);
-//   }
-// );
-
-// sunGroup.scale.set(0.005, 0.005, 2)
-// sunGroup.position.x = -10.00;
-// sunGroup.position.y = 0.8;
-// sunGroup.position.z = -10;
-
-
-export const textureLoader = new THREE.TextureLoader();
+loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', [-3.6, 0.8, -10], 0.005, 'blue');
 
 // loadImage(source, name, height, [x, y, z])
 loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 10, [0, 0, -1])
@@ -254,35 +202,32 @@ function animate() {
   delta = clock.getDelta();
   (mixer && worldState.bassState.active) && mixer.update(delta);
   // mixer.update(delta);
-  
+
   // run the "built in" animations
   icosahedronAnimation()
-  // chairAnimation();
+  chairAnimation();
   worldState.starsState.active && starsAnimation();
-
 
   stats && stats.update();
 }
 
-// f is the factor of displacement of the stars
-// d changes the direction of the stars
 
+function loadAnimatedGltf(source, array, name, [x, y, z]) {
 
-function loadAnimatedGltf (source, container,  name, [x, y, z]){
-  
   loader.load(source, function (gltf) {
-    container = gltf.scene;
+    let container = gltf.scene;
     container.name = name
+    array.push(container)
     scene.add(container);
-  
+
     // necessary for the imported animations
     mixer = new THREE.AnimationMixer(gltf.scene);
     gltf.animations.forEach((clip) => {
       mixer.clipAction(clip).play();
     });
-  
+
     container.position.set(x, y, z);
-    console.log(name , ' loaded')
+    console.log(name, ' loaded')
   }, function (xhr) {
     // console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
   }, function (error) {
@@ -291,15 +236,11 @@ function loadAnimatedGltf (source, container,  name, [x, y, z]){
 }
 
 function chairAnimation() {
-  chair && (
-    chair.rotation.x += 0.01
-    // chair.position.x > boxBounds.x && (chairSwitch.x = !chairSwitch.x, chair.position.x = boxBounds.x),
-    // chair.position.y > boxBounds.y && (chairSwitch.y = !chairSwitch.y, chair.position.y = boxBounds.y),
-    // chair.position.z > boxBounds.z && (chairSwitch.z = !chairSwitch.z, chair.position.z = boxBounds.z),
-    // chairSwitch = true ? (chair.position.x += 0.1) : (chair.position.x -= 0.1),
-    // chairSwitch = true ? (chair.position.y += 0.1) : (chair.position.y -= 0.1),
-    // chairSwitch = true ? (chair.position.z += 0.1) : (chair.position.z -= 0.1)
-  );
+  if (chair[0]) {
+    // console.log(chair) 
+    chair[0].rotation.x += 0.05;
+  }
 }
 
+console.log(scene)
 animate()
