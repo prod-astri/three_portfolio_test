@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { loader, scene } from './main';
+import { loader, scene } from '../main';
 
-export function loadAnimatedGltf(source, container, name, [x, y, z], mixer) {
+export function loadAnimatedGltf(source, container, name, [x, y, z]) {
 
   loader.load(source, function (gltf) {
     container = gltf.scene;
@@ -9,7 +9,7 @@ export function loadAnimatedGltf(source, container, name, [x, y, z], mixer) {
     scene.add(container);
 
     // necessary for the imported animations
-    mixer = new THREE.AnimationMixer(gltf.scene);
+    let mixer = new THREE.AnimationMixer(gltf.scene);
     gltf.animations.forEach((clip) => {
       mixer.clipAction(clip).play();
     });

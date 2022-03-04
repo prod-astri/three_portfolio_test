@@ -1,16 +1,16 @@
 import * as THREE from 'three';
-import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
-import { scene } from './main';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
+import { svgLoader, scene } from '../main';
 
-const svgLoader = new SVGLoader();
-export function loadSvg(src, group, name, size) {
+
+export function loadSvg(src, group, name, size, color) {
   svgLoader.load(src, function (data) {
     const paths = data.paths;
 
     for (let i = 0; i < paths.length; i++) {
       const path = paths[i];
       const svgMaterial = new THREE.MeshBasicMaterial({
-        color: 'red',
+        color: color ? color : 'red',
         side: THREE.DoubleSide,
         depthWrite: false,
       });

@@ -1,4 +1,4 @@
-import { worldState, stars, starsGroup } from './main';
+import { worldState, stars, starsGroup } from '../main';
 
 let f;
 let d = true;

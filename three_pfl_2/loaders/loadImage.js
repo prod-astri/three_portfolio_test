@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { textureLoader, scene } from './main';
+import { textureLoader, scene } from '../main';
 
 export function loadImage(source, name, h, [x, y, z]) {
   // this is to get the ratio for the plane size;

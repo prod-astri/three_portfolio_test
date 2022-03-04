@@ -5,14 +5,16 @@ import '/style.css'
 import * as THREE from 'three';
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
-import { loadImage } from './loadImage';
-import { loadSvg } from './loadSvg';
+import { loadImage } from './loaders/loadImage';
+import { loadSvg } from './loaders/loadSvg';
 
 import { icosahedronAnimation } from './animations/icosahedronAnimation';
-import { starsAnimation } from './starsAnimation';
+import { starsAnimation } from './animations/starsAnimation';
+// import { loadAnimatedGltf } from './loadAnimatedGltf';
 
 
 
@@ -43,6 +45,7 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg')
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 window.onresize = function () {
+  // fit the view to the new window proportions
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -50,20 +53,19 @@ window.onresize = function () {
   trackScrolling();
 };
 
+document.body.onscroll = trackScrolling
 function trackScrolling() {
-  // the value of getBoundingClientRect().top will always be negative
+// the value of getBoundingClientRect().top will always be negative
   // the division factor is arbitrary for now
   worldState.scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
   camera.position.y = 0 - worldState.scrolledFromTop / 230
 }
 
-document.body.onscroll = trackScrolling
 
 
 // ANIMATION SETUP
-let mixer;
+let mixer = new THREE.AnimationMixer();
 let clock = new THREE.Clock();
-
 
 // BUTTONS
 document.getElementById("statsButton").onclick = function () {
@@ -117,6 +119,7 @@ export let stars = [];
 export const starsGroup = new THREE.Group();
 const starGeometry = new THREE.OctahedronGeometry(0.25);
 const starMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true })
+
 function addStar() {
   const star = new THREE.Mesh(starGeometry, starMaterial);
   const x = THREE.MathUtils.randFloatSpread(100)
@@ -159,7 +162,7 @@ scene.add(cubesGroup)
 
 
 // OBJECT LOADERS
-const loader = new GLTFLoader();
+export const loader = new GLTFLoader();
 
 // let chair;
 // loader.load('./3d_models/messed_up_chair.glb', function (gltf) {
@@ -176,12 +179,14 @@ const loader = new GLTFLoader();
 
 
 let bass;
-loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0])
+//  loadAnimatedGltf (source, container,  name, [x, y, z]){
+loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0], mixer)
 
-
+export const svgLoader = new SVGLoader();
 const soundDesignGroup = new THREE.Group();
-// loadSvg(source, group, scale)
-loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', 0.005);
+const soundDesignGroup2 = new THREE.Group();
+// loadSvg(source, group, , name, scale, color)
+loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', 0.005, 'blue');
 
 soundDesignGroup.position.x = -3.600;
 soundDesignGroup.position.y = 0.8;
@@ -248,7 +253,8 @@ function animate() {
   // run the imported animation (bass)
   delta = clock.getDelta();
   (mixer && worldState.bassState.active) && mixer.update(delta);
-
+  // mixer.update(delta);
+  
   // run the "built in" animations
   icosahedronAnimation()
   // chairAnimation();
