@@ -3,18 +3,21 @@
 
 import '/style.css'
 import * as THREE from 'three';
+
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
+
 import { loadImage } from './loadImage';
 import { loadSvg } from './loadSvg';
+
 import { icosahedronAnimation } from './animations/icosahedronAnimation';
+import { starsAnimation } from './starsAnimation';
 
 
 
 // PAGE STATE
-const worldState = {
+export const worldState = {
   statsOn: false,
   starsState: {
     active: false,
@@ -110,8 +113,8 @@ export const icosahedron = new THREE.Mesh(geometry, material);
 scene.add(icosahedron)
 
 
-let stars = [];
-const starsGroup = new THREE.Group();
+export let stars = [];
+export const starsGroup = new THREE.Group();
 const starGeometry = new THREE.OctahedronGeometry(0.25);
 const starMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true })
 function addStar() {
@@ -238,7 +241,6 @@ const controls = new OrbitControls(camera, renderer.domElement);
 let delta;
 
 
-
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
@@ -258,11 +260,10 @@ function animate() {
 
 // f is the factor of displacement of the stars
 // d changes the direction of the stars
-let f;
-let d = true;
+
 
 function loadAnimatedGltf (source, container,  name, [x, y, z]){
-
+  
   loader.load(source, function (gltf) {
     container = gltf.scene;
     container.name = name
@@ -281,23 +282,6 @@ function loadAnimatedGltf (source, container,  name, [x, y, z]){
   }, function (error) {
     console.error(error);
   });
-}
-
-
-function starsAnimation() {
-  f = worldState.starsState.distance * 0.01;
-  stars.forEach(function (s) {
-    s.rotation.z += 0.07;
-    s.position.x = s.originalPosition.x * f;
-    s.position.y = Math.abs(s.originalPosition.y * f);
-    s.position.z = s.originalPosition.z * f;
-  })
-  // depending on d, invert the direction
-  d ? worldState.starsState.distance += 0.07 : worldState.starsState.distance -= 0.07
-  // if you reach the limit (f = 1/100 distance), put distance back at the limit and change direction
-  f < -1 && (d = !d, worldState.starsState.distance = -100);
-  f > 1 && (d = !d, worldState.starsState.distance = 100);
-  starsGroup.rotation.y -= 0.001;
 }
 
 function chairAnimation() {
