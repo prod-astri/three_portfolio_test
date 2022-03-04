@@ -11,7 +11,8 @@ export function loadImage(source, name, h, [x, y, z]) {
 
     // this actually builds the mesh for THREE
     let imgGeometry = new THREE.PlaneGeometry(h, h * ratio);
-    let imgMaterial = new THREE.MeshLambertMaterial({
+    // let imgMaterial = new THREE.MeshLambertMaterial({
+    let imgMaterial = new THREE.MeshBasicMaterial({
       map: textureLoader.load(source)
     });
 
