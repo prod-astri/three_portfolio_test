@@ -4,19 +4,20 @@
 import '/style.css'
 import * as THREE from 'three';
 
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module.js';
 
+import { loadBackground } from './loaders/loadBackground';
 import { loadImage } from './loaders/loadImage';
+import { loadGltf } from './loaders/loadGltf';
 import { loadSvg } from './loaders/loadSvg';
 
 import { icosahedronAnimation } from './animations/icosahedronAnimation';
 import { starsAnimation } from './animations/starsAnimation';
-import { loadGltf } from './loaders/loadGltf';
+import { chairAnimation } from './animations/chairAnimation';
 // import { loadAnimatedGltf } from './loadAnimatedGltf';
-
 
 
 // PAGE STATE
@@ -55,6 +56,7 @@ window.onresize = function () {
 };
 
 document.body.onscroll = trackScrolling
+
 function trackScrolling() {
   // the value of getBoundingClientRect().top will always be negative
   // the division factor is arbitrary for now
@@ -63,10 +65,11 @@ function trackScrolling() {
 }
 
 
-
-// ANIMATION SETUP
+//   ANIMATION SETUP
 let mixer = new THREE.AnimationMixer();
 let clock = new THREE.Clock();
+let delta;
+
 
 // BUTTONS
 document.getElementById("statsButton").onclick = function () {
@@ -96,20 +99,9 @@ camera.position.set(0, 0, 10);
 camera.rotation.x = 0;
 
 
-const bgLoader = new THREE.CubeTextureLoader();
-const bgTexture = bgLoader.load([
-  '/pictures/sky_sides.jpg',
-  '/pictures/sky_sides.jpg',
-  '/pictures/sky_top.jpg',
-  '/pictures/sky_bottom.jpg',
-  '/pictures/sky_sides.jpg',
-  '/pictures/sky_sides.jpg',
-
-]);
-scene.background = bgTexture;
-
-
 // GEOMETRIES
+loadBackground();
+
 const geometry = new THREE.IcosahedronGeometry(0.5)
 const material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
 export const icosahedron = new THREE.Mesh(geometry, material);
@@ -163,37 +155,36 @@ scene.add(cubesGroup)
 
 
 // OBJECT LOADERS
-//   loadImage(source, name, h, [x, y, z])
-//   loadSvg(source, group, , name, scale, color)
-//   loadGltf(source, container, name, [x, y, z]) 
-//   loadAnimatedGltf (source, container,  name, [x, y, z])
 
 export const loader = new GLTFLoader();
 export const svgLoader = new SVGLoader();
 export const textureLoader = new THREE.TextureLoader();
 
+//   loadImage(source, name, h, [x, y, z])
+//   loadSvg(source, group, [x, y, z], name, scale, color)
+//   loadGltf(source, container, name, [x, y, z]) 
+//   loadAnimatedGltf (source, container,  name, [x, y, z])
+
+
 let bass = [];
 loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0], mixer)
 
-let chair = [];
+export let chair = [];
 loadGltf('./3d_models/messed_up_chair.glb', chair, 'chair', [-2, 0, 0])
 
 const soundDesignGroup = new THREE.Group();
 loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', [-3.6, 0.8, -10], 0.005, 'blue');
 
 // loadImage(source, name, height, [x, y, z])
-loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 10, [0, 0, -1])
-loadImage('/pictures/share.jpg', 'share', 10, [0, 0, 0])
+loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 1, [4, -5, 4])
+loadImage('/pictures/share.jpg', 'share', 1, [4, -3, 4])
 
 
-// CONTROLS
+// // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
 
 
-// ANIMATION
-let delta;
-
-
+// // ANIMATE
 function animate() {
   requestAnimationFrame(animate);
   renderer.render(scene, camera);
@@ -235,12 +226,4 @@ function loadAnimatedGltf(source, array, name, [x, y, z]) {
   });
 }
 
-function chairAnimation() {
-  if (chair[0]) {
-    // console.log(chair) 
-    chair[0].rotation.x += 0.05;
-  }
-}
-
-console.log(scene)
 animate()
