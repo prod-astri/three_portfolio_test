@@ -1,5 +1,5 @@
 // RIGHT /UP /TOWARDS ME ;)
-// starMaterial = whiteMaterial for now
+// topStarsMaterial = whiteMaterial for now
 
 import '/style.css'
 import * as THREE from 'three';
@@ -110,13 +110,13 @@ export const icosahedron = new THREE.Mesh(geometry, material);
 scene.add(icosahedron)
 
 
-export let stars = [];
+export let topStars = [];
 export const starsGroup = new THREE.Group();
 const starGeometry = new THREE.OctahedronGeometry(0.25);
-const starMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true })
+const topStarsMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true })
 
 function addStar() {
-  const star = new THREE.Mesh(starGeometry, starMaterial);
+  const star = new THREE.Mesh(starGeometry, topStarsMaterial);
   const x = THREE.MathUtils.randFloatSpread(100)
   const y = Math.abs(THREE.MathUtils.randFloatSpread(100))
   const z = THREE.MathUtils.randFloatSpread(100);
@@ -126,7 +126,7 @@ function addStar() {
   star.rotation.x = [y]
   star.rotation.y = [x]
   star.originalPosition = { x, y, z }
-  stars.push(star)
+  topStars.push(star)
   starsGroup.add(star)
 }
 

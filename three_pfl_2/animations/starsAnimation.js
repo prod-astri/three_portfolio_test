@@ -1,4 +1,4 @@
-import { worldState, stars, starsGroup } from '../main';
+import { worldState, topStars, starsGroup } from '../main';
 
 // f is the factor of displacement of the stars
 let f;
@@ -7,7 +7,7 @@ let d = true;
 
 export function starsAnimation() {
   f = worldState.starsState.distance * 0.01;
-  stars.forEach(function (s) {
+  topStars.forEach(function (s) {
     s.rotation.z += 0.07;
     s.position.x = s.originalPosition.x * f;
     s.position.y = Math.abs(s.originalPosition.y * f);
