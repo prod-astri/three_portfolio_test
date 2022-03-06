@@ -31,6 +31,7 @@ export const worldState = {
     active: false
   },
   scrolledFromTop: 0,
+  max3dHeight: -30 
 }
 
 
@@ -48,6 +49,10 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg')
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+let bodyScrolled = document.body.getBoundingClientRect().top
+let totalHeight = document.getElementById('main').getBoundingClientRect().height
+let textHeight = document.getElementById('textContainer').getBoundingClientRect().height
+
 window.onresize = function () {
   // fit the view to the new window proportions
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -60,10 +65,15 @@ window.onresize = function () {
 document.body.onscroll = trackScrolling
 
 function trackScrolling() {
+  bodyScrolled = document.body.getBoundingClientRect().top
+  totalHeight = document.getElementById('main').getBoundingClientRect().height
+  textHeight = document.getElementById('textContainer').getBoundingClientRect().height 
   // the value of getBoundingClientRect().top will always be negative
+  // percentage of the page scrolled
+  worldState.scrolledFromTop = bodyScrolled / textHeight * -100;
+  console.log('wstate scrolled:' , worldState.scrolledFromTop)
   // the division factor is arbitrary for now
-  worldState.scrolledFromTop = -1 * document.body.getBoundingClientRect().top;
-  camera.position.y = 0 - worldState.scrolledFromTop / 230
+  camera.position.y = worldState.scrolledFromTop * worldState.max3dHeight / 100
 }
 
 
