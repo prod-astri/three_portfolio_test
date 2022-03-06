@@ -50,24 +50,24 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 let headerHeight = document.getElementById('header').scrollHeight
+
 let firstBlock = document.getElementById('firstBlock')
 firstBlock.style.marginTop = `${(window.innerHeight / 2)}px`
 
 let bodyScrolled = document.body.getBoundingClientRect().top
 let totalHeight = document.getElementById('main').getBoundingClientRect().height
 let textHeight = document.getElementById('textContainer').getBoundingClientRect().height
-let dif = totalHeight - textHeight;
 
-window.onresize = function () {
+window.onresize = () => {
   // fit the view to the new window proportions
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-  // take it into account
-  totalHeight = document.getElementById('main').getBoundingClientRect().height
-  textHeight = document.getElementById('textContainer').getBoundingClientRect().height 
-  dif = totalHeight - textHeight;
-  
+
+  // check the new ratios between elements to offset the text blocks
+  totalHeight = document.getElementById('main').getBoundingClientRect().height;
+  textHeight = document.getElementById('textContainer').getBoundingClientRect().height;
+
   trackScrolling();
 };
 
