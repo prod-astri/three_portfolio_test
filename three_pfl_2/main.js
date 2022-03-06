@@ -49,9 +49,14 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg')
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+let headerHeight = document.getElementById('header').scrollHeight
+let firstBlock = document.getElementById('firstBlock')
+firstBlock.style.marginTop = `${(window.innerHeight / 2)}px`
+
 let bodyScrolled = document.body.getBoundingClientRect().top
 let totalHeight = document.getElementById('main').getBoundingClientRect().height
 let textHeight = document.getElementById('textContainer').getBoundingClientRect().height
+let dif = totalHeight - textHeight;
 
 window.onresize = function () {
   // fit the view to the new window proportions
@@ -59,6 +64,10 @@ window.onresize = function () {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
   // take it into account
+  totalHeight = document.getElementById('main').getBoundingClientRect().height
+  textHeight = document.getElementById('textContainer').getBoundingClientRect().height 
+  dif = totalHeight - textHeight;
+  
   trackScrolling();
 };
 
@@ -66,12 +75,11 @@ document.body.onscroll = trackScrolling
 
 function trackScrolling() {
   bodyScrolled = document.body.getBoundingClientRect().top
-  totalHeight = document.getElementById('main').getBoundingClientRect().height
-  textHeight = document.getElementById('textContainer').getBoundingClientRect().height 
   // the value of getBoundingClientRect().top will always be negative
   // percentage of the page scrolled
-  worldState.scrolledFromTop = bodyScrolled / textHeight * -100;
+  worldState.scrolledFromTop = bodyScrolled / (textHeight) * -100;
   console.log('wstate scrolled:' , worldState.scrolledFromTop)
+  console.log('camera pos:' , camera.position)
   // the division factor is arbitrary for now
   camera.position.y = worldState.scrolledFromTop * worldState.max3dHeight / 100
 }
@@ -107,7 +115,7 @@ pointLight.position.set(0, 4, 0)
 
 
 // ------ CAMERA INITIAL POSITIONING ------
-camera.position.set(0, 0, 10);
+camera.position.set(0, 0, 3);
 camera.rotation.x = 0;
 
 
@@ -187,8 +195,8 @@ const soundDesignGroup = new THREE.Group();
 loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', [-3.6, 0.8, -10], 0.005, 'blue');
 
 // loadImage(source, name, height, [x, y, z])
-loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 1, [4, -5, 4])
-loadImage('/pictures/share.jpg', 'share', 1, [4, -3, 4])
+loadImage('/pictures/HAAA_003_still_purple.png', 'haaa003', 1, [4, -5, 2.5])
+loadImage('/pictures/share.jpg', 'share', 1, [4, -3, 2.5])
 
 
 // ------ CONTROLS ------
