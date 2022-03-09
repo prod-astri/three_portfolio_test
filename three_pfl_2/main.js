@@ -17,6 +17,7 @@ import { loadSvg } from './loaders/loadSvg';
 import { icosahedronAnimation } from './animations/icosahedronAnimation';
 import { starsAnimation } from './animations/starsAnimation';
 import { chairAnimation } from './animations/chairAnimation';
+import { loadAnimatedGltf } from './loadAnimatedGltf';
 // import { loadAnimatedGltf } from './loadAnimatedGltf';
 
 
@@ -86,7 +87,10 @@ function trackScrolling() {
 
 
 // ------ ANIMATION SETUP ------
-let mixer = new THREE.AnimationMixer();
+// let mixer = new THREE.AnimationMixer();
+export let mixers = [];
+let mixer0 = new THREE.AnimationMixer();
+mixers.push(mixer0)
 let clock = new THREE.Clock();
 let delta;
 
@@ -115,7 +119,7 @@ pointLight.position.set(0, 4, 0)
 
 
 // ------ CAMERA INITIAL POSITIONING ------
-camera.position.set(0, 0, 3);
+camera.position.set(0, 0, 5);
 camera.rotation.x = 0;
 
 
@@ -131,7 +135,7 @@ scene.add(icosahedron)
 export let topStars = [];
 export const starsGroup = new THREE.Group();
 const starGeometry = new THREE.OctahedronGeometry(0.25);
-const topStarsMaterial = new THREE.MeshStandardMaterial({ color: 0x000000, wireframe: true })
+const topStarsMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, wireframe: true })
 
 function addStar() {
   const star = new THREE.Mesh(starGeometry, topStarsMaterial);
@@ -189,7 +193,7 @@ export let chair = [];
 loadGltf('./3d_models/messed_up_chair.glb', chair, 'chair', [-2, 0, 0])
 
 let bass = [];
-loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0], mixer)
+loadAnimatedGltf('./3d_models/anibass.glb', bass, 'bass', [2, 0, 0], mixers)
 
 const soundDesignGroup = new THREE.Group();
 loadSvg('/pictures/sd.svg', soundDesignGroup, 'sound_design', [-3.6, 0.8, -10], 0.005, 'blue');
@@ -210,7 +214,7 @@ function animate() {
 
   // run the imported animation (bass)
   delta = clock.getDelta();
-  (mixer && worldState.bassState.active) && mixer.update(delta);
+  (mixers[1] && worldState.bassState.active) && mixers[1].update(delta);
 
   // run the "built in" animations
   icosahedronAnimation()
@@ -220,28 +224,5 @@ function animate() {
   stats && stats.update();
 }
 
-
-function loadAnimatedGltf(source, array, name, [x, y, z]) {
-
-  loader.load(source, function (gltf) {
-    let container = gltf.scene;
-    container.name = name
-    array.push(container)
-    scene.add(container);
-
-    // necessary for the imported animations
-    mixer = new THREE.AnimationMixer(gltf.scene);
-    gltf.animations.forEach((clip) => {
-      mixer.clipAction(clip).play();
-    });
-
-    container.position.set(x, y, z);
-    console.log(name, ' loaded')
-  }, function (xhr) {
-    // console.log((xhr.loaded / xhr.total * 100), "% bass loaded")
-  }, function (error) {
-    console.error(error);
-  });
-}
 
 animate()
