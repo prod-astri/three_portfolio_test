@@ -4,10 +4,10 @@
 import '/style.css'
 import * as THREE from "/node_modules/three/build/three.module.js"
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
-import Stats from 'three/examples/jsm/libs/stats.module.js';
+import { OrbitControls } from '/node_modules/three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from '/node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { SVGLoader } from '/node_modules/three/examples/jsm/loaders/SVGLoader.js';
+import Stats from '/node_modules/three/examples/jsm/libs/stats.module.js';
 
 import { loadBackground } from './loaders/loadBackground';
 import { loadImage } from './loaders/loadImage';
