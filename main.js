@@ -2,7 +2,7 @@
 // topStarsMaterial = whiteMaterial for now
 
 import '/style.css'
-import * as THREE from 'three';
+import * as THREE from "/node_modules/three/build/three.module.js"
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -17,7 +17,7 @@ import { loadSvg } from './loaders/loadSvg';
 import { icosahedronAnimation } from './animations/icosahedronAnimation';
 import { starsAnimation } from './animations/starsAnimation';
 import { chairAnimation } from './animations/chairAnimation';
-import { loadAnimatedGltf } from './loadAnimatedGltf';
+import { loadAnimatedGltf } from './loaders/loadAnimatedGltf';
 // import { loadAnimatedGltf } from './loadAnimatedGltf';
 
 
