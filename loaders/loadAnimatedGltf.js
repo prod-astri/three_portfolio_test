@@ -1,4 +1,4 @@
-import * as THREE from "/node_modules/three/build/three.module.js"
+import * as THREE from "three"
 import { loader, scene, mixers } from '../main';
 
 export function loadAnimatedGltf(source, array, name, [x, y, z]) {

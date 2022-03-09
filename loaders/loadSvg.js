@@ -1,4 +1,4 @@
-import * as THREE from "/node_modules/three/build/three.module.js"
+import * as THREE from "three"
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
 import { svgLoader, scene } from '../main';
 

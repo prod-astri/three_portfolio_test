@@ -1,4 +1,4 @@
-import * as THREE from "/node_modules/three/build/three.module.js"
+import * as THREE from "three"
 import { textureLoader, scene } from '../main';
 
 export function loadImage(source, name, h, [x, y, z]) {
