@@ -4,19 +4,19 @@
 import '/style.css'
 import * as THREE from 'three';
 
-import { OrbitControls } from '/jsm/controls/OrbitControls';
-import { GLTFLoader } from '/jsm/loaders/GLTFLoader.js';
-import { SVGLoader } from '/jsm/loaders/SVGLoader.js';
-import Stats from '/jsm/libs/stats.module.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
+import Stats from 'three/examples/jsm/libs/stats.module.js';
 
-import { loadBackground } from '../loaders/loadBackground';
-import { loadImage } from '../loaders/loadImage';
-import { loadGltf } from '../loaders/loadGltf';
-import { loadSvg } from '../loaders/loadSvg';
+import { loadBackground } from './loaders/loadBackground';
+import { loadImage } from './loaders/loadImage';
+import { loadGltf } from './loaders/loadGltf';
+import { loadSvg } from './loaders/loadSvg';
 
-import { icosahedronAnimation } from '../animations/icosahedronAnimation';
-import { starsAnimation } from '../animations/starsAnimation';
-import { chairAnimation } from '../animations/chairAnimation';
+import { icosahedronAnimation } from './animations/icosahedronAnimation';
+import { starsAnimation } from './animations/starsAnimation';
+import { chairAnimation } from './animations/chairAnimation';
 // import { loadAnimatedGltf } from './loadAnimatedGltf';
 
 
