@@ -13,12 +13,12 @@ main {
   color: #f0f8ff;
 }
 
-p {
+/* p {
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
   hyphens: auto;
-}
+} */
 
 /* header {
   position: fixed;
@@ -43,7 +43,7 @@ p {
   background-color: rgba(138, 43, 226, 0.13);
   text-align: center;
   flex-basis: 50%;
-  /* flex-shrink: 2; */
+  // flex-shrink: 2;
   margin: 10px;
 }
 
