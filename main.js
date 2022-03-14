@@ -81,8 +81,8 @@ function trackScrolling() {
   // the value of getBoundingClientRect().top will always be negative
   // percentage of the page scrolled
   worldState.scrolledFromTop = bodyScrolled / (textHeight) * -100;
-  console.log('wstate scrolled:' , worldState.scrolledFromTop)
-  console.log('camera pos:' , camera.position)
+  // console.log('wstate scrolled:' , worldState.scrolledFromTop)
+  // console.log('camera pos:' , camera.position)
   // the division factor is arbitrary for now
   camera.position.y = worldState.scrolledFromTop * worldState.max3dHeight / 100
 }
